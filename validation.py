@@ -128,10 +128,10 @@ def validate_card_number(card_number: str) -> Tuple[str, str]:
     card = normalize_basic(card_number).replace(" ", "").replace("-", "")
 
     if not card.isdigit():
-        return "", "the card only accepts digits"
+        return "", "The card only accepts digits"
 
     if not 13 <= len(card) <= 19:
-        return "", "the card has invalid length"
+        return "", "Invalid length"
     
     # TODO: Implement validation
     return card, ""
@@ -153,27 +153,16 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
     Returns:
         (normalized_exp_date, error_message)
     """
-    try:
-        parts = exp_date.split("/")
-        if len(parts) != 2:
-            return "", "Formato de fecha incorrecto. Debe ser MM/YY"
-        month_part, year_part = parts
-        if not (month_part.isdigit() and year_part.isdigit()):
-            return "", "El mes y el año deben ser numéricos"
-        if len(month_part) != 2 or len(year_part) != 2:
-            return "", "El mes y el año deben tener dos dígitos"
-        m = int(month_part)
-        y = int(year_part) 
-        exp_year = 2000 + y
-        exp_month = m
-    except Exception:
-        return "", "El mes y el año deben tener dos dígitos"
+    date = normalize_basic(exp_date).replace(" ", "").replace("-", "")
+    if not EXP_RE.match(date):
+        return "", "Expiration date must be in MM/YY format"
+    month_part, year_part = date.split("/")
+    m = int(month_part)
     if not (1 <= m <= 12):
-        return "", "the expiration month must be between 01 and 12"
-    if (y<26):
-        return "", "the card is expired"
-    if (y==26 and m<2):
-        return "", "the card is expired"
+        return "", "Invalid month"
+    if exp_date_is_expired(date):
+        return "", "Card is expired"
+    return date, ""
 
 
 def validate_cvv(cvv: str) -> Tuple[str, str]:
@@ -194,10 +183,10 @@ def validate_cvv(cvv: str) -> Tuple[str, str]:
     """
 
     if not cvv.isdigit():
-        return "", "the cvv only accepts digits"
+        return "", "Only digits are accepted"
 
     if not 3 <= len(cvv) <= 4:
-        return "", "the cvv has invalid length"
+        return "", "Invalid length"
 
 
 
@@ -298,10 +287,6 @@ def validate_payment_form(
     email_clean, err = validate_billing_email(billing_email)
     if err:
         errors["billing_email"] = err
-    clean["billing_email"] = email_clean
-
-    return clean, errors
-rrors["billing_email"] = err
     clean["billing_email"] = email_clean
 
     return clean, errors
