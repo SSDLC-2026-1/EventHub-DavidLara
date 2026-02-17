@@ -128,10 +128,10 @@ def validate_card_number(card_number: str) -> Tuple[str, str]:
     card = normalize_basic(card_number).replace(" ", "").replace("-", "")
 
     if not card.isdigit():
-        return "", "the card only accepts digits"
+        return "", "The card only accepts digits"
 
     if not 13 <= len(card) <= 19:
-        return "", "the card has invalid length"
+        return "", "Invalid length"
     
     # TODO: Implement validation
     return card, ""
@@ -149,7 +149,7 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
 
     Input:
         exp_date (str)
-
+ 
     Returns:
         (normalized_exp_date, error_message)
     """
@@ -194,10 +194,10 @@ def validate_cvv(cvv: str) -> Tuple[str, str]:
     """
 
     if not cvv.isdigit():
-        return "", "the cvv only accepts digits"
+        return "", "Only digits are accepted"
 
     if not 3 <= len(cvv) <= 4:
-        return "", "the cvv has invalid length"
+        return "", "Invalid length"
 
 
 
@@ -298,10 +298,6 @@ def validate_payment_form(
     email_clean, err = validate_billing_email(billing_email)
     if err:
         errors["billing_email"] = err
-    clean["billing_email"] = email_clean
-
-    return clean, errors
-rrors["billing_email"] = err
     clean["billing_email"] = email_clean
 
     return clean, errors
