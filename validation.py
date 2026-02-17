@@ -14,6 +14,7 @@ Where:
     error_message: empty string if valid, otherwise error description
 """
 
+from calendar import month
 import re
 import unicodedata
 from datetime import datetime
@@ -116,10 +117,15 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
     Returns:
         (normalized_exp_date, error_message)
     """
-
-
+    date = normalize_basic(exp_date).replace(" ", "").replace("-", "")
+    if not EXP_RE.match(date):
+        return "", "Expiration date must be in MM/YY format"
+    if not (1 <= int(month) <= 12):
+        return "", "Invalid month"
+    if exp_date_is_expired(date):
+        return "", "Card is expired"
     # TODO: Implement validation
-    return "", ""
+    return date, ""
 
 
 def validate_cvv(cvv: str) -> Tuple[str, str]:
