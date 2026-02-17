@@ -174,11 +174,16 @@ def validate_billing_email(billing_email: str) -> Tuple[str, str]:
     """
 
     email = normalize_basic(billing_email).lower()
+
     if len(email) > 254:
-        return "", "Email exceeds maximum length of 254 characters"
+        return "", "Email exceeds maximum length"
+    
+    pattern = r"^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+    if not re.fullmatch(pattern, email): 
+        return "", "Invalid email"
 
     # TODO: Implement validation
-    return "", ""
+    return email, ""
 
 
 def validate_name_on_card(name_on_card: str) -> Tuple[str, str]:
