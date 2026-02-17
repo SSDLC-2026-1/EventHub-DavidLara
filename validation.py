@@ -156,18 +156,18 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
     try:
         parts = exp_date.split("/")
         if len(parts) != 2:
-            return "", "Formato de fecha incorrecto. Debe ser MM/YY"
+            return "", "Incorrect format. Format must be MM/YY" 
         month_part, year_part = parts
         if not (month_part.isdigit() and year_part.isdigit()):
-            return "", "El mes y el año deben ser numéricos"
+            return "", "the month and year must be numeric"
         if len(month_part) != 2 or len(year_part) != 2:
-            return "", "El mes y el año deben tener dos dígitos"
+            return "", "the month and year must have two digits each"
         m = int(month_part)
         y = int(year_part) 
         exp_year = 2000 + y
         exp_month = m
     except Exception:
-        return "", "El mes y el año deben tener dos dígitos"
+        return "", "the month and year must have two digits each"
     if not (1 <= m <= 12):
         return "", "the expiration month must be between 01 and 12"
     if (y<26):
