@@ -14,7 +14,6 @@ Where:
     error_message: empty string if valid, otherwise error description
 """
 
-from calendar import month
 import re
 import unicodedata
 from datetime import datetime
@@ -26,11 +25,11 @@ from typing import Tuple, Dict
 # =============================
 
 
-CARD_DIGITS_RE = re.compile(r"")     # digits only
-CVV_RE = re.compile(r"")             # 3 or 4 digits
-EXP_RE = re.compile(r"")             # MM/YY format
-EMAIL_BASIC_RE = re.compile(r"")     # basic email structure
-NAME_ALLOWED_RE = re.compile(r"")    # allowed name characters
+CARD_DIGITS_RE = re.compile(r"^\d+$")     # digits only
+CVV_RE = re.compile(r"^\d{3,4}$")         # 3 or 4 digits
+EXP_RE = re.compile(r"^(0[1-9]|1[0-2])\/(\d{2})$")  # MM/YY format
+EMAIL_BASIC_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")     # basic email structure
+NAME_ALLOWED_RE = re.compile(r"^[A-Za-zÀ-ÖØ-öø-ÿ'\- ]+$")    # allowed name characters
 
 
 # =============================
@@ -59,8 +58,45 @@ def luhn_is_valid(number: str) -> bool:
         False otherwise
     """
 
-    # TODO: Implement Luhn algorithm
-    pass
+    # Implementation of Luhn algorithm
+    digits = [int(d) for d in number if d.isdigit()]
+    if not digits:
+        return False
+    checksum = 0
+    parity = len(digits) % 2
+    for i, d in enumerate(digits):
+        if i % 2 == parity:
+            d = d * 2
+            if d > 9:
+                d -= 9
+        checksum += d
+    return checksum % 10 == 0
+
+
+def exp_date_is_expired(date_str: str) -> bool:
+    """
+    Check if an expiration date in MM/YY is expired compared to current UTC date.
+    Returns True if expired.
+    """
+    try:
+        parts = date_str.split("/")
+        if len(parts) != 2:
+            return True
+        month_part, year_part = parts
+        m = int(month_part)
+        y = int(year_part)
+        exp_year = 2000 + y
+        exp_month = m
+    except Exception:
+        return True
+
+    now = datetime.utcnow()
+    if (exp_year, exp_month) < (now.year, now.month):
+        return True
+    # Optional: reject absurdly distant future (>15 years)
+    if exp_year > now.year + 15:
+        return True
+    return False
 
 
 # =============================
@@ -120,11 +156,12 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
     date = normalize_basic(exp_date).replace(" ", "").replace("-", "")
     if not EXP_RE.match(date):
         return "", "Expiration date must be in MM/YY format"
-    if not (1 <= int(month) <= 12):
+    month_part, year_part = date.split("/")
+    m = int(month_part)
+    if not (1 <= m <= 12):
         return "", "Invalid month"
     if exp_date_is_expired(date):
         return "", "Card is expired"
-    # TODO: Implement validation
     return date, ""
 
 
