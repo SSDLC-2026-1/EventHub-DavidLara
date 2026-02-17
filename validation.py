@@ -56,6 +56,7 @@ def luhn_is_valid(number: str) -> bool:
         True if valid according to Luhn algorithm
         False otherwise
     """
+
     # TODO: Implement Luhn algorithm
     pass
 
@@ -85,8 +86,17 @@ def validate_card_number(card_number: str) -> Tuple[str, str]:
         - If invalid → return ("", "Error message")
         - If valid → return (all credit card digits, "")
     """
+
+    card = normalize_basic(card_number).replace(" ", "").replace("-", "")
+
+    if not card.isdigit():
+        return "", "The card only accepts digits"
+
+    if not 13 <= len(card) <= 19:
+        return "", "Invalid length"
+    
     # TODO: Implement validation
-    return "", ""
+    return card, ""
 
 
 def validate_exp_date(exp_date: str) -> Tuple[str, str]:
@@ -105,6 +115,8 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
     Returns:
         (normalized_exp_date, error_message)
     """
+
+
     # TODO: Implement validation
     return "", ""
 
@@ -125,6 +137,15 @@ def validate_cvv(cvv: str) -> Tuple[str, str]:
         ("", error_message)
         (always return empty clean value for security reasons)
     """
+
+    if not cvv.isdigit():
+        return "", "Only digits are accepted"
+
+    if not 3 <= len(cvv) <= 4:
+        return "", "Invalid length"
+
+
+
     # TODO: Implement validation
     return "", ""
 
@@ -144,6 +165,11 @@ def validate_billing_email(billing_email: str) -> Tuple[str, str]:
     Returns:
         (normalized_email, error_message)
     """
+
+    email = normalize_basic(billing_email).lower()
+    if len(email) > 254:
+        return "", "Email exceeds maximum length of 254 characters"
+
     # TODO: Implement validation
     return "", ""
 
