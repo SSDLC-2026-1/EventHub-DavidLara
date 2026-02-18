@@ -250,8 +250,21 @@ def validate_name_on_card(name_on_card: str) -> Tuple[str, str]:
     Returns:
         (normalized_name, error_message)
     """
-    # TODO: Implement validation
-    return "", ""
+    # Normalize input (strip whitespace)
+    name = unicodedata.normalize("NFKC", (name_on_card or "")).strip()
+    
+    # Collapse multiple spaces
+    name = re.sub(r"\s+", " ", name)
+    
+    # Check allowed characters (letters, accents, spaces, apostrophes, hyphens)
+    if not NAME_ALLOWED_RE.match(name):
+        return "", "Only letters, spaces, apostrophes, and hyphens are allowed"
+    
+    # Check length
+    if not (2 <= len(name) <= 60):
+        return "", "Name must be between 2 and 60 characters"
+    
+    return name, ""
 
 
 # =============================
