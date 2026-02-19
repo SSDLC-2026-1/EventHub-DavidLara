@@ -174,7 +174,7 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
         return "", "the card is expired"
     if (y==26 and m<2):
         return "", "the card is expired"
-
+    return "", ""
 
 def validate_cvv(cvv: str) -> Tuple[str, str]:
     """
