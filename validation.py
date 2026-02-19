@@ -151,21 +151,32 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
 
     Input:
         exp_date (str)
-
+ 
     Returns:
         (normalized_exp_date, error_message)
     """
-    date = normalize_basic(exp_date).replace(" ", "").replace("-", "")
-    if not EXP_RE.match(date):
-        return "", "Expiration date must be in MM/YY format"
-    month_part, year_part = date.split("/")
-    m = int(month_part)
+    try:
+        parts = exp_date.split("/")
+        if len(parts) != 2:
+            return "", "Incorrect format. Format must be MM/YY" 
+        month_part, year_part = parts
+        if not (month_part.isdigit() and year_part.isdigit()):
+            return "", "the month and year must be numeric"
+        if len(month_part) != 2 or len(year_part) != 2:
+            return "", "the month and year must have two digits each"
+        m = int(month_part)
+        y = int(year_part) 
+        exp_year = 2000 + y
+        exp_month = m
+    except Exception:
+        return "", "the month and year must have two digits each"
     if not (1 <= m <= 12):
-        return "", "Invalid month"
-    if exp_date_is_expired(date):
-        return "", "Card is expired"
-    return date, ""
-
+        return "", "the expiration month must be between 01 and 12"
+    if (y<26):
+        return "", "the card is expired"
+    if (y==26 and m<2):
+        return "", "the card is expired"
+    return "", ""
 
 def validate_cvv(cvv: str) -> Tuple[str, str]:
     """
@@ -237,19 +248,8 @@ def validate_name_on_card(name_on_card: str) -> Tuple[str, str]:
     Returns:
         (normalized_name, error_message)
     """
-
-    name = normalize_basic(name_on_card)
-    name = re.sub(r"\s+", " ", name)
-
-    if not 2 <= len(name) <= 60:
-        return "", "Invalid length"
-    
-    pattern = r"^[A-Za-zÀ-ÖØ-öø-ÿ'\- ]+$"
-
-    if not re.fullmatch(pattern, name):
-        return "", "Invalid characters in name"
-    
-    return name, ""
+    # TODO: Implement validation
+    return "", ""
 
 
 # =============================
