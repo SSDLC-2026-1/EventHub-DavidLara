@@ -133,7 +133,9 @@ def validate_card_number(card_number: str) -> Tuple[str, str]:
     if not 13 <= len(card) <= 19:
         return "", "Invalid length"
     
-    # TODO: Implement validation
+    if not luhn_is_valid(card):
+        return "", "Invalid card number (failed Luhn check)"
+
     return card, ""
 
 
@@ -188,9 +190,6 @@ def validate_cvv(cvv: str) -> Tuple[str, str]:
     if not 3 <= len(cvv) <= 4:
         return "", "Invalid length"
 
-
-
-    # TODO: Implement validation
     return "", ""
 
 
@@ -219,7 +218,6 @@ def validate_billing_email(billing_email: str) -> Tuple[str, str]:
     if not re.fullmatch(pattern, email): 
         return "", "Invalid email"
 
-    # TODO: Implement validation
     return email, ""
 
 
@@ -239,8 +237,19 @@ def validate_name_on_card(name_on_card: str) -> Tuple[str, str]:
     Returns:
         (normalized_name, error_message)
     """
-    # TODO: Implement validation
-    return "", ""
+
+    name = normalize_basic(name_on_card)
+    name = re.sub(r"\s+", " ", name)
+
+    if not 2 <= len(name) <= 60:
+        return "", "Invalid length"
+    
+    pattern = r"^[A-Za-zÀ-ÖØ-öø-ÿ'\- ]+$"
+
+    if not re.fullmatch(pattern, name):
+        return "", "Invalid characters in name"
+    
+    return name, ""
 
 
 # =============================
