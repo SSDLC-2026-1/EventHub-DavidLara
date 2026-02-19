@@ -1,4 +1,10 @@
 """
+Modificado por: 
+Kevin Efren Cruz Holguin 
+David Andres Lara Galindo
+
+"""
+"""
 payment_validation.py
 
 Skeleton file for input validation exercise.
@@ -252,7 +258,6 @@ def validate_name_on_card(name_on_card: str) -> Tuple[str, str]:
     """
 
     name = normalize_basic(name_on_card)
-
     name = re.sub(r"\s+", " ", name).strip()
 
     if not (2 <= len(name) <= 60):
