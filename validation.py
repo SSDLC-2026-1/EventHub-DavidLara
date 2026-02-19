@@ -155,6 +155,8 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
     Returns:
         (normalized_exp_date, error_message)
     """
+
+
     try:
         parts = exp_date.split("/")
         if len(parts) != 2:
@@ -176,6 +178,7 @@ def validate_exp_date(exp_date: str) -> Tuple[str, str]:
         return "", "the card is expired"
     if (y==26 and m<2):
         return "", "the card is expired"
+    
     return "", ""
 
 def validate_cvv(cvv: str) -> Tuple[str, str]:
@@ -225,8 +228,7 @@ def validate_billing_email(billing_email: str) -> Tuple[str, str]:
     if len(email) > 254:
         return "", "Email exceeds maximum length"
     
-    pattern = r"^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-    if not re.fullmatch(pattern, email): 
+    if not EMAIL_BASIC_RE.fullmatch(email): 
         return "", "Invalid email"
 
     return email, ""
@@ -248,8 +250,18 @@ def validate_name_on_card(name_on_card: str) -> Tuple[str, str]:
     Returns:
         (normalized_name, error_message)
     """
-    # TODO: Implement validation
-    return "", ""
+
+    name = normalize_basic(name_on_card)
+
+    name = re.sub(r"\s+", " ", name).strip()
+
+    if not (2 <= len(name) <= 60):
+        return "", "Invalid length"   
+    
+    if not NAME_ALLOWED_RE.fullmatch(name):
+        return "", "Invalid characters in name"
+
+    return name, ""
 
 
 # =============================
